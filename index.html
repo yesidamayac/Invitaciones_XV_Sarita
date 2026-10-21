@@ -36,7 +36,7 @@
       position: fixed;
       top: 0; left: 0;
       width: 100vw; height: 100vh;
-      background-color: #2b2623; /* Fondo oscuro de respaldo si falla la imagen */
+      background-color: #2b2623;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -54,7 +54,7 @@
       pointer-events: none;
     }
 
-    /* Carrusel de fondo en portada */
+    /* Carrusel de fondo en portada con transición más rápida */
     .hero-bg {
       position: absolute;
       top: 0; left: 0;
@@ -62,7 +62,7 @@
       background-size: cover;
       background-position: center;
       opacity: 0;
-      transition: opacity 1.5s ease-in-out;
+      transition: opacity 0.8s ease-in-out; /* Transición más fluida y rápida */
       z-index: 1;
     }
     .hero-bg.active { opacity: 1; }
@@ -162,7 +162,7 @@
       overflow: hidden;
       border-radius: 20px;
       margin-top: 20px;
-      background-color: #f7f2ed; /* Fondo suave por si la foto no llena los bordes */
+      background-color: #f7f2ed;
       box-shadow: 0 8px 25px rgba(0,0,0,0.1);
     }
 
@@ -184,7 +184,7 @@
       max-height: 100%;
       width: auto;
       height: auto;
-      object-fit: contain; /* CENTRA Y EVITA QUE SE CORTE LA FOTO */
+      object-fit: contain;
       border-radius: 12px;
     }
 
@@ -310,11 +310,11 @@
 <body>
 
   <!-- ==================================================
-       PORTADA DE ENTRADA (COVER HERO FIX)
+       PORTADA DE ENTRADA (CORREGIDA CON RUTAS EXACTAS)
   ================================================== -->
   <div id="hero-overlay">
-    <!-- Imágenes de fondo dinámicas -->
-    <div class="hero-bg active" style="background-image: url('china1.jpg');"></div>
+    <!-- Se incluye la ruta con espacio "china 1.jpg" para que cargue correctamente -->
+    <div class="hero-bg active" style="background-image: url('china 1.jpg');"></div>
     <div class="hero-bg" style="background-image: url('china2.jpg');"></div>
     <div class="hero-bg" style="background-image: url('china3.jpg');"></div>
     <div class="hero-mask"></div>
@@ -356,11 +356,11 @@
       <div class="event-details">
         <div class="detail-item">
           <h4>📅 Fecha</h4>
-          <p>Sábado, 15 de Noviembre</p>
+          <p>Sábado, 5 de Junio</p>
         </div>
         <div class="detail-item">
           <h4>⏰ Hora</h4>
-          <p>7:00 PM</p>
+          <p>5:00 PM</p>
         </div>
         <div class="detail-item">
           <h4>📍 Lugar</h4>
@@ -373,7 +373,7 @@
       </div>
     </div>
 
-    <!-- TARJETA 3: MOMENTOS ESPECIALES (FOTOS CENTRADAS SIN CORTAR) -->
+    <!-- TARJETA 3: MOMENTOS ESPECIALES -->
     <div class="card">
       <h2 class="section-title">Momentos Especiales</h2>
       
@@ -381,21 +381,19 @@
         <button class="nav-btn prev-btn" onclick="moverSlide(-1)">❮</button>
         <button class="nav-btn next-btn" onclick="moverSlide(1)">❯</button>
 
-        <!-- Pistas con imagenes sara1.jpg a sara9.jpg -->
         <div class="carousel-track" id="carouselTrack">
-          <div class="carousel-slide"><img src="sara1.jpg" alt="Sarita 1" onerror="this.src='china1.jpg'"></div>
+          <div class="carousel-slide"><img src="sara1.jpg" alt="Sarita 1" onerror="this.src='china 1.jpg'"></div>
           <div class="carousel-slide"><img src="sara2.jpg" alt="Sarita 2" onerror="this.src='china2.jpg'"></div>
           <div class="carousel-slide"><img src="sara3.jpg" alt="Sarita 3" onerror="this.src='china3.jpg'"></div>
-          <div class="carousel-slide"><img src="sara4.jpg" alt="Sarita 4" onerror="this.src='china1.jpg'"></div>
+          <div class="carousel-slide"><img src="sara4.jpg" alt="Sarita 4" onerror="this.src='china 1.jpg'"></div>
           <div class="carousel-slide"><img src="sara5.jpg" alt="Sarita 5" onerror="this.src='china2.jpg'"></div>
           <div class="carousel-slide"><img src="sara6.jpg" alt="Sarita 6" onerror="this.src='china3.jpg'"></div>
-          <div class="carousel-slide"><img src="sara7.jpg" alt="Sarita 7" onerror="this.src='china1.jpg'"></div>
+          <div class="carousel-slide"><img src="sara7.jpg" alt="Sarita 7" onerror="this.src='china 1.jpg'"></div>
           <div class="carousel-slide"><img src="sara8.jpg" alt="Sarita 8" onerror="this.src='china2.jpg'"></div>
           <div class="carousel-slide"><img src="sara9.jpg" alt="Sarita 9" onerror="this.src='china3.jpg'"></div>
         </div>
       </div>
       
-      <!-- Indicadores para 9 fotos -->
       <div class="carousel-dots" id="carouselDots">
         <span class="dot active" onclick="irASlide(0)"></span>
         <span class="dot" onclick="irASlide(1)"></span>
@@ -437,7 +435,7 @@
       document.getElementById('hero-overlay').classList.add('hidden');
     }
 
-    /* CARRUSEL FONDO PORTADA (china1 - china3) */
+    /* CARRUSEL FONDO PORTADA (china 1, china2, china3) */
     let heroBgIndex = 0;
     const heroBgs = document.querySelectorAll('.hero-bg');
     
@@ -446,7 +444,7 @@
         heroBgs[heroBgIndex].classList.remove('active');
         heroBgIndex = (heroBgIndex + 1) % heroBgs.length;
         heroBgs[heroBgIndex].classList.add('active');
-      }, 4000);
+      }, 2500); // <-- VELOCIDAD ACELERADA: Cambia cada 2.5 segundos
     }
 
     /* CARRUSEL MOMENTOS ESPECIALES (sara1 - sara9) */
