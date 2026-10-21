@@ -15,14 +15,13 @@
       --primary-color: #d4a373;
       --primary-hover: #bc8a5f;
       --bg-color: #fdf6f0;
-      --card-bg: rgba(255, 255, 255, 0.93); /* Sutil translucidez para integrar con el fondo */
+      --card-bg: rgba(255, 255, 255, 0.93);
       --text-color: #4a4a4a;
       --accent-color: #faedcd;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
     
-    /* FONDO DE LA PÁGINA ATENUADO CON china1.jpg */
     body {
       font-family: 'Montserrat', sans-serif;
       background: linear-gradient(rgba(253, 246, 240, 0.88), rgba(253, 246, 240, 0.88)), 
@@ -32,9 +31,7 @@
       overflow-x: hidden;
     }
 
-    /* --------------------------------------------------
-       1. PORTADA HERO (FIXED & BLINDADA)
-    -------------------------------------------------- */
+    /* PORTADA HERO */
     #hero-overlay {
       position: fixed;
       top: 0; left: 0;
@@ -108,9 +105,7 @@
       100% { transform: scale(1); }
     }
 
-    /* --------------------------------------------------
-       2. CONTENEDOR PRINCIPAL AMPLIO
-    -------------------------------------------------- */
+    /* CONTENEDOR PRINCIPAL */
     .container {
       max-width: 1000px;
       margin: 0 auto;
@@ -127,25 +122,10 @@
       backdrop-filter: blur(5px);
     }
 
-    /* PRIMERA TARJETA: ALTURA COMPACTA */
-    .card.welcome-card {
-      padding: 25px 20px !important;
-    }
+    .card.welcome-card { padding: 25px 20px !important; }
 
-    h1.script-title { 
-      font-family: 'Great Vibes', cursive; 
-      font-size: 3.8rem; 
-      color: var(--primary-color); 
-      line-height: 1; 
-    }
-    
-    h2.section-title { 
-      font-family: 'Playfair Display', serif; 
-      font-size: 1.8rem; 
-      color: #333; 
-      margin-top: 10px;
-      margin-bottom: 8px; 
-    }
+    h1.script-title { font-family: 'Great Vibes', cursive; font-size: 3.8rem; color: var(--primary-color); line-height: 1; }
+    h2.section-title { font-family: 'Playfair Display', serif; font-size: 1.8rem; color: #333; margin-top: 10px; margin-bottom: 8px; }
 
     .poem {
       font-style: italic;
@@ -172,9 +152,7 @@
     .detail-item h4 { font-size: 0.85rem; text-transform: uppercase; color: #8a6d4b; margin-bottom: 6px; letter-spacing: 1px; }
     .detail-item p { font-weight: 600; color: #333; font-size: 1.05rem; }
 
-    /* --------------------------------------------------
-       3. CARRUSEL DE FOTOS (CENTRADAS SIN CORTAR)
-    -------------------------------------------------- */
+    /* CARRUSEL */
     .carousel-container {
       position: relative;
       width: 100%;
@@ -250,9 +228,7 @@
       border-radius: 10px;
     }
 
-    /* --------------------------------------------------
-       4. SECCIÓN RSVP / FORMULARIO FINAL
-    -------------------------------------------------- */
+    /* SECCIÓN RSVP */
     .rsvp-card {
       background: var(--card-bg);
       border: 2px solid var(--primary-color);
@@ -307,9 +283,9 @@
 
     #status { margin-top: 20px; font-weight: 600; word-break: break-all; }
     .error-msg { color: #d9534f; background: #f8d7da; padding: 14px; border-radius: 12px; font-size: 1rem; }
-    .success-msg { color: #28a745; background: #d4edda; padding: 18px; border-radius: 12px; font-size: 1.05rem; }
+    .success-msg { color: #28a745; background: #d4edda; padding: 18px; border-radius: 12px; font-size: 1.05rem; text-align: left; }
+    .note-box { font-size: 0.9rem; color: #777; margin-top: 15px; border-top: 1px dashed #ddd; padding-top: 10px; }
 
-    /* Adaptación Responsiva */
     @media (max-width: 850px) {
       .event-details { grid-template-columns: repeat(2, 1fr); }
     }
@@ -328,9 +304,7 @@
 </head>
 <body>
 
-  <!-- ==================================================
-       PORTADA DE ENTRADA (PORTADA HERO)
-  ================================================== -->
+  <!-- PORTADA HERO -->
   <div id="hero-overlay">
     <div class="hero-bg active" style="background-image: url('china1.jpg');"></div>
     <div class="hero-bg" style="background-image: url('china2.jpg');"></div>
@@ -348,12 +322,9 @@
     </div>
   </div>
 
-  <!-- ==================================================
-       CONTENIDO PRINCIPAL
-  ================================================== -->
   <div class="container">
     
-    <!-- TARJETA 1: SALUDO (REDUCIDA EN ALTURA) -->
+    <!-- TARJETA 1: SALUDO -->
     <div class="card welcome-card">
       <h1 class="script-title">Sarita</h1>
       <p style="letter-spacing: 2.5px; text-transform: uppercase; color: #8a6d4b; font-size: 0.85rem; font-weight: 600; margin-top: 2px;">Mis 15 Años</p>
@@ -408,7 +379,7 @@
       <div class="event-details">
         <div class="detail-item">
           <h4>📅 Fecha</h4>
-          <p>Sábado, 5 de Junio</p>
+          <p>Sábado, 15 de Noviembre de 2026</p>
         </div>
         <div class="detail-item">
           <h4>⏰ Hora</h4>
@@ -428,23 +399,19 @@
     <!-- TARJETA 4: FORMULARIO RSVP -->
     <div class="rsvp-card">
       <h2 class="section-title">Confirmación de Asistencia</h2>
-      <p style="font-size: 1rem; color: #666;">Por favor, indica quiénes de tu grupo nos acompañarán:</p>
-
-      <div id="rsvp-section" style="display:none;">
-        <div id="checkboxes-container" class="guest-list"></div>
-        <button id="btn-confirmar" class="btn-submit" onclick="enviarRSVP()">Confirmar Asistencia</button>
+      <div id="rsvp-container-content">
+        <p style="font-size: 1rem; color: #666;">Cargando estado de asistencia...</p>
       </div>
-
-      <div id="status"></div>
     </div>
 
   </div>
 
-  <!-- ==================================================
-       LÓGICA JAVASCRIPT
-  ================================================== -->
+  <!-- SCRIPT -->
   <script>
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwnE0o4qOiYgKo1KxtMkxC2GFODXPi5SSl-znn-h0A2tfYgFcOssi0oRMZ-jdBGIQtp4g/exec"; 
+
+    // FECHA LÍMITE DE CONFIRMACIÓN (Ejemplo: 16 de Octubre de 2026)
+    const FECHA_LIMITE = new Date("2026-10-16T23:59:59");
 
     let currentSlug = "";
     let invitadoActual = null;
@@ -453,10 +420,9 @@
       document.getElementById('hero-overlay').classList.add('hidden');
     }
 
-    /* CARRUSEL FONDO PORTADA (china1, china2, china3) */
+    /* CARRUSEL PORTADA */
     let heroBgIndex = 0;
     const heroBgs = document.querySelectorAll('.hero-bg');
-    
     if(heroBgs.length > 0) {
       setInterval(() => {
         heroBgs[heroBgIndex].classList.remove('active');
@@ -465,7 +431,7 @@
       }, 2500);
     }
 
-    /* CARRUSEL MOMENTOS ESPECIALES (sara1 - sara9) */
+    /* CARRUSEL MOMENTOS ESPECIALES */
     let indexActual = 0;
     const track = document.getElementById('carouselTrack');
     const dots = document.querySelectorAll('.dot');
@@ -502,10 +468,9 @@
       clearInterval(autoPlayTimer);
       iniciarTimer();
     }
-
     iniciarTimer();
 
-    /* LÓGICA JSON & RSVP */
+    /* CARGA DE DATOS Y VERIFICACIÓN EN GOOGLE SHEETS */
     const urlParams = new URLSearchParams(window.location.search);
     currentSlug = urlParams.get('card');
 
@@ -520,37 +485,97 @@
             document.getElementById('hero-guest-name').innerText = "¡Te esperamos!";
             document.getElementById('invitado-nombre').innerText = "¡Te esperamos en mi fiesta!";
             document.getElementById('invitado-cupos').innerText = "Por favor confirma tu asistencia directamente con la familia.";
+            renderizarFormularioFallback();
           });
       });
 
     function procesarDatosInvitado(data) {
       if (currentSlug && data[currentSlug]) {
         invitadoActual = data[currentSlug];
-        renderizarInvitacion();
+        document.getElementById('hero-guest-name').innerText = "Invitación para: " + invitadoActual.invitadoPrincipal;
+        document.getElementById('invitado-nombre').innerText = "¡Hola, " + invitadoActual.invitadoPrincipal + "!";
+        document.getElementById('invitado-cupos').innerText = `Tienes ${invitadoActual.cupos} pase(s) reservado(s).`;
+        
+        verificarEstadoAsistenciaEnServidor();
       } else {
         document.getElementById('hero-guest-name').innerText = "Invitación Especial";
         document.getElementById('invitado-nombre').innerText = "¡Te esperamos en mi fiesta!";
         document.getElementById('invitado-cupos').innerText = "Por favor confirma tu asistencia directamente con la familia.";
+        renderizarFormularioFallback();
       }
     }
 
-    function renderizarInvitacion() {
-      document.getElementById('hero-guest-name').innerText = "Invitación para: " + invitadoActual.invitadoPrincipal;
-      document.getElementById('invitado-nombre').innerText = "¡Hola, " + invitadoActual.invitadoPrincipal + "!";
-      document.getElementById('invitado-cupos').innerText = `Tienes ${invitadoActual.cupos} pase(s) reservado(s).`;
+    // Consultar a Google Sheets si este slug ya confirmó
+    function verificarEstadoAsistenciaEnServidor() {
+      const rsvpContainer = document.getElementById('rsvp-container-content');
+      
+      // Validar si ya pasó la fecha límite
+      const hoy = new Date();
+      if (hoy > FECHA_LIMITE) {
+        rsvpContainer.innerHTML = `
+          <div class="error-msg">
+            ❌ <b>El plazo de confirmación ha finalizado.</b><br>
+            Por logística del evento, el periodo para registrar o modificar invitados ha vencido. ¡Agradecemos tu comprensión!
+          </div>`;
+        return;
+      }
+
+      fetch(`${GOOGLE_SCRIPT_URL}?slug=${currentSlug}`)
+        .then(res => res.json())
+        .then(resData => {
+          if (resData.confirmado) {
+            // Ya confirmó previamente
+            let listaAsistentesHtml = resData.asistentes.map(a => `<li>✔️ ${a}</li>`).join('');
+            rsvpContainer.innerHTML = `
+              <div class="success-msg">
+                💚 <b>¡Tu asistencia ya se encuentra confirmada!</b><br><br>
+                Personas registradas que nos acompañarán:
+                <ul style="margin: 10px 0 15px 20px;">${listaAsistentesHtml}</ul>
+                <div class="note-box">
+                  Si necesitas hacer alguna modificación o tienes alguna novedad, comunícate con la familia de Sarita para cambiar la lista de invitados antes de la fecha límite.
+                </div>
+              </div>
+              <button class="btn-submit" style="margin-top:15px; background-color: #8a6d4b;" onclick="habilitarModificacion()">Modificar mi asistencia ✍️</button>
+            `;
+          } else {
+            // No ha confirmado, mostrar formulario normal
+            construirFormularioRSVP();
+          }
+        })
+        .catch(() => {
+          // Si falla la red, mostrar formulario por defecto
+          construirFormularioRSVP();
+        });
+    }
+
+    function construirFormularioRSVP() {
+      const rsvpContainer = document.getElementById('rsvp-container-content');
+      rsvpContainer.innerHTML = `
+        <p style="font-size: 1rem; color: #666;">Por favor, indica quiénes de tu grupo nos acompañarán:</p>
+        <div class="guest-list" id="checkboxes-container"></div>
+        <button id="btn-confirmar" class="btn-submit" onclick="enviarRSVP()">Confirmar Asistencia</button>
+        <div id="status"></div>
+        <div class="note-box">
+          Nota: Si tienes alguna novedad o necesitas cambiar la lista, comunícate directamente con la familia de Sarita. Tienes plazo hasta el 16 de Octubre de 2026.
+        </div>
+      `;
 
       const container = document.getElementById('checkboxes-container');
       container.innerHTML = "";
-
       agregarCheckbox(container, invitadoActual.invitadoPrincipal);
-
       if (invitadoActual.acompanantes) {
-        invitadoActual.acompanantes.forEach(nombre => {
-          agregarCheckbox(container, nombre);
-        });
+        invitadoActual.acompanantes.forEach(nombre => agregarCheckbox(container, nombre));
       }
+    }
 
-      document.getElementById('rsvp-section').style.display = 'block';
+    function habilitarModificacion() {
+      construirFormularioRSVP();
+    }
+
+    function renderizarFormularioFallback() {
+      document.getElementById('rsvp-container-content').innerHTML = `
+        <p style="font-size: 1rem; color: #666;">Por favor confirma tu asistencia directamente con la familia.</p>
+      `;
     }
 
     function agregarCheckbox(container, nombre) {
@@ -594,10 +619,12 @@
         body: JSON.stringify(payload)
       })
       .then(() => {
-        statusDiv.innerHTML = `<div class="success-msg">💚 <b>¡Confirmación registrada con éxito!</b><br>Muchas gracias por acompañarme.</div>`;
-        document.getElementById('rsvp-section').style.display = 'none';
+        statusDiv.innerHTML = `<div class="success-msg" style="margin-top:15px;">💚 <b>¡Confirmación registrada con éxito!</b><br>Muchas gracias por acompañarme.</div>`;
+        setTimeout(() => {
+          verificarEstadoAsistenciaEnServidor(); // Recarga el estado visual para mostrar el resumen definitivo
+        }, 1500);
       })
-      .catch(error => {
+      .catch(() => {
         statusDiv.innerHTML = `<div class="error-msg">❌ Error al guardar. Intenta de nuevo.</div>`;
         btn.disabled = false;
         btn.innerText = "Reintentar Confirmación";
