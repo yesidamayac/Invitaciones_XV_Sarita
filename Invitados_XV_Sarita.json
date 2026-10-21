@@ -1,0 +1,12 @@
+{
+  "yesid-amaya": {
+    "invitadoPrincipal": "Yesid Amaya Corredor",
+    "cupos": 3,
+    "acompanantes": ["Giovana Luna", "Valentina Amaya"]
+  },
+  "familia-perez": {
+    "invitadoPrincipal": "Familia Pérez",
+    "cupos": 2,
+    "acompanantes": ["Carlos Pérez"]
+  }
+}
