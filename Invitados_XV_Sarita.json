@@ -1,32 +1,37 @@
 {
-  "ye3536-am7910": {
+  "ye5024-am3464": {
     "invitadoPrincipal": "Yesid Amaya Corredor",
     "acompanantes": ["Giovana Luna", "Valentina Amaya"],
     "cupos": 3
   },
-  "fa2106-mo2064": {
+  "fa1035-mo1795": {
     "invitadoPrincipal": "Fabio Morales",
     "acompanantes": ["Esly Sacristan"],
     "cupos": 2
   },
-  "he8022-sa7890": {
+  "he1804-sa8845": {
     "invitadoPrincipal": "Henry Sacristan",
     "acompanantes": ["Gloria Alejandrino"],
     "cupos": 2
   },
-  "se6503-ur8443": {
+  "se5813-ur9798": {
     "invitadoPrincipal": "Sergio Uribe",
     "acompanantes": ["Krystal Sacristan", "Eli Uribe"],
     "cupos": 3
   },
-  "yo1566-sa9891": {
+  "yo1797-sa8242": {
     "invitadoPrincipal": "Yolanda Sacristan",
     "acompanantes": [],
     "cupos": 1
   },
-  "ra2149-sa2173": {
+  "ra4638-sa7605": {
     "invitadoPrincipal": "Raul Sacristan",
     "acompanantes": ["Alexandra Carrillo"],
+    "cupos": 2
+  },
+  "nu3486-xv4902": {
+    "invitadoPrincipal": "Nuevo",
+    "acompanantes": ["Nuevo acompañanate"],
     "cupos": 2
   }
 }
