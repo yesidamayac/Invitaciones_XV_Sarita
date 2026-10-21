@@ -31,7 +31,9 @@
       overflow-x: hidden;
     }
 
-    /* PORTADA HERO */
+    /* --------------------------------------------------
+       1. PORTADA HERO (FIXED & BLINDADA)
+    -------------------------------------------------- */
     #hero-overlay {
       position: fixed;
       top: 0; left: 0;
@@ -105,7 +107,9 @@
       100% { transform: scale(1); }
     }
 
-    /* CONTENEDOR PRINCIPAL */
+    /* --------------------------------------------------
+       2. CONTENEDOR PRINCIPAL AMPLIO
+    -------------------------------------------------- */
     .container {
       max-width: 1000px;
       margin: 0 auto;
@@ -152,7 +156,9 @@
     .detail-item h4 { font-size: 0.85rem; text-transform: uppercase; color: #8a6d4b; margin-bottom: 6px; letter-spacing: 1px; }
     .detail-item p { font-weight: 600; color: #333; font-size: 1.05rem; }
 
-    /* CARRUSEL */
+    /* --------------------------------------------------
+       3. CARRUSEL DE FOTOS (CENTRADAS SIN CORTAR)
+    -------------------------------------------------- */
     .carousel-container {
       position: relative;
       width: 100%;
@@ -228,7 +234,9 @@
       border-radius: 10px;
     }
 
-    /* SECCIÓN RSVP */
+    /* --------------------------------------------------
+       4. SECCIÓN RSVP / FORMULARIO FINAL
+    -------------------------------------------------- */
     .rsvp-card {
       background: var(--card-bg);
       border: 2px solid var(--primary-color);
@@ -372,14 +380,14 @@
       </div>
     </div>
 
-    <!-- TARJETA 3: DETALLES DEL EVENTO -->
+    <!-- TARJETA 3: DETALLES DEL EVENTO (FECHA OFICIAL TUYA) -->
     <div class="card">
       <h2 class="section-title">Detalles del Evento</h2>
       
       <div class="event-details">
         <div class="detail-item">
           <h4>📅 Fecha</h4>
-          <p>Sábado, 15 de Noviembre de 2026</p>
+          <p>Sábado, 5 de Junio de 2027</p>
         </div>
         <div class="detail-item">
           <h4>⏰ Hora</h4>
@@ -410,8 +418,8 @@
   <script>
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwnE0o4qOiYgKo1KxtMkxC2GFODXPi5SSl-znn-h0A2tfYgFcOssi0oRMZ-jdBGIQtp4g/exec"; 
 
-    // FECHA LÍMITE DE CONFIRMACIÓN (Ejemplo: 16 de Octubre de 2026)
-    const FECHA_LIMITE = new Date("2026-10-16T23:59:59");
+    // FECHA LÍMITE DE CONFIRMACIÓN (Ejemplo: 5 de Mayo de 2027, 30 días antes del evento)
+    const FECHA_LIMITE = new Date("2027-05-05T23:59:59");
 
     let currentSlug = "";
     let invitadoActual = null;
@@ -420,7 +428,7 @@
       document.getElementById('hero-overlay').classList.add('hidden');
     }
 
-    /* CARRUSEL PORTADA */
+    /* CARRUSEL FONDO PORTADA (china1, china2, china3) */
     let heroBgIndex = 0;
     const heroBgs = document.querySelectorAll('.hero-bg');
     if(heroBgs.length > 0) {
@@ -431,7 +439,7 @@
       }, 2500);
     }
 
-    /* CARRUSEL MOMENTOS ESPECIALES */
+    /* CARRUSEL MOMENTOS ESPECIALES (sara1 - sara9) */
     let indexActual = 0;
     const track = document.getElementById('carouselTrack');
     const dots = document.querySelectorAll('.dot');
@@ -505,11 +513,9 @@
       }
     }
 
-    // Consultar a Google Sheets si este slug ya confirmó
     function verificarEstadoAsistenciaEnServidor() {
       const rsvpContainer = document.getElementById('rsvp-container-content');
       
-      // Validar si ya pasó la fecha límite
       const hoy = new Date();
       if (hoy > FECHA_LIMITE) {
         rsvpContainer.innerHTML = `
@@ -524,7 +530,6 @@
         .then(res => res.json())
         .then(resData => {
           if (resData.confirmado) {
-            // Ya confirmó previamente
             let listaAsistentesHtml = resData.asistentes.map(a => `<li>✔️ ${a}</li>`).join('');
             rsvpContainer.innerHTML = `
               <div class="success-msg">
@@ -538,12 +543,10 @@
               <button class="btn-submit" style="margin-top:15px; background-color: #8a6d4b;" onclick="habilitarModificacion()">Modificar mi asistencia ✍️</button>
             `;
           } else {
-            // No ha confirmado, mostrar formulario normal
             construirFormularioRSVP();
           }
         })
         .catch(() => {
-          // Si falla la red, mostrar formulario por defecto
           construirFormularioRSVP();
         });
     }
@@ -556,7 +559,7 @@
         <button id="btn-confirmar" class="btn-submit" onclick="enviarRSVP()">Confirmar Asistencia</button>
         <div id="status"></div>
         <div class="note-box">
-          Nota: Si tienes alguna novedad o necesitas cambiar la lista, comunícate directamente con la familia de Sarita. Tienes plazo hasta el 16 de Octubre de 2026.
+          Nota: Si tienes alguna novedad o necesitas cambiar la lista, comunícate directamente con la familia de Sarita. Tienes plazo hasta el 5 de Mayo de 2027.
         </div>
       `;
 
@@ -621,7 +624,7 @@
       .then(() => {
         statusDiv.innerHTML = `<div class="success-msg" style="margin-top:15px;">💚 <b>¡Confirmación registrada con éxito!</b><br>Muchas gracias por acompañarme.</div>`;
         setTimeout(() => {
-          verificarEstadoAsistenciaEnServidor(); // Recarga el estado visual para mostrar el resumen definitivo
+          verificarEstadoAsistenciaEnServidor();
         }, 1500);
       })
       .catch(() => {
