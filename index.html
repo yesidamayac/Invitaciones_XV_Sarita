@@ -314,7 +314,7 @@
   ================================================== -->
   <div id="hero-overlay">
     <!-- Se incluye la ruta con espacio "china 1.jpg" para que cargue correctamente -->
-    <div class="hero-bg active" style="background-image: url('china 1.jpg');"></div>
+    <div class="hero-bg active" style="background-image: url('china1.jpg');"></div>
     <div class="hero-bg" style="background-image: url('china2.jpg');"></div>
     <div class="hero-bg" style="background-image: url('china3.jpg');"></div>
     <div class="hero-mask"></div>
@@ -444,7 +444,7 @@
         heroBgs[heroBgIndex].classList.remove('active');
         heroBgIndex = (heroBgIndex + 1) % heroBgs.length;
         heroBgs[heroBgIndex].classList.add('active');
-      }, 2500); // <-- VELOCIDAD ACELERADA: Cambia cada 2.5 segundos
+      }, 1000); // <-- VELOCIDAD ACELERADA: Cambia cada 1 segundos
     }
 
     /* CARRUSEL MOMENTOS ESPECIALES (sara1 - sara9) */
