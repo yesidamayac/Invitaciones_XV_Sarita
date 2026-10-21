@@ -286,6 +286,86 @@
     .success-msg { color: #28a745; background: #d4edda; padding: 18px; border-radius: 12px; font-size: 1.05rem; text-align: left; }
     .note-box { font-size: 0.9rem; color: #777; margin-top: 15px; border-top: 1px dashed #ddd; padding-top: 10px; }
 
+    /* --------------------------------------------------
+       VENTANA EMERGENTE (POPUP / MODAL DE ERROR)
+    -------------------------------------------------- */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(6px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 999999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-card {
+      background: #ffffff;
+      padding: 35px 25px;
+      border-radius: 28px;
+      max-width: 450px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+      border: 2px solid var(--primary-color);
+      transform: scale(0.8);
+      transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .modal-overlay.active .modal-card {
+      transform: scale(1);
+    }
+
+    .modal-icon {
+      font-size: 3.8rem;
+      margin-bottom: 12px;
+      display: inline-block;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .modal-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      color: #333;
+      margin-bottom: 12px;
+    }
+
+    .modal-body {
+      font-size: 1rem;
+      color: #666;
+      line-height: 1.6;
+      margin-bottom: 25px;
+    }
+
+    .modal-btn {
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 12px 30px;
+      border-radius: 25px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .modal-btn:hover { background: var(--primary-hover); }
+
     @media (max-width: 850px) {
       .event-details { grid-template-columns: repeat(2, 1fr); }
     }
@@ -406,6 +486,19 @@
 
   </div>
 
+  <!-- VENTANA EMERGENTE (POPUP ERROR SLUG) -->
+  <div class="modal-overlay" id="errorModal">
+    <div class="modal-card">
+      <div class="modal-icon">✉️✨</div>
+      <h3 class="modal-title">¡Uy, un pequeño despiste!</h3>
+      <p class="modal-body">
+        No logramos encontrar tu invitación con este enlace.<br><br>
+        Por favor, <b>verifica la dirección URL</b> que te enviamos o comunícate directamente con la familia de Sarita para ayudarte.
+      </p>
+      <button class="modal-btn" onclick="cerrarModal()">Entendido 👍</button>
+    </div>
+  </div>
+
   <!-- SCRIPT -->
   <script>
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwnE0o4qOiYgKo1KxtMkxC2GFODXPi5SSl-znn-h0A2tfYgFcOssi0oRMZ-jdBGIQtp4g/exec"; 
@@ -415,9 +508,18 @@
 
     let currentSlug = "";
     let invitadoActual = null;
+    let dataLoaded = false;
 
     function cerrarPortada() {
       document.getElementById('hero-overlay').classList.add('hidden');
+    }
+
+    function mostrarModalError() {
+      document.getElementById('errorModal').classList.add('active');
+    }
+
+    function cerrarModal() {
+      document.getElementById('errorModal').classList.remove('active');
     }
 
     /* CARRUSEL PORTADA */
@@ -470,33 +572,47 @@
     }
     iniciarTimer();
 
-    /* CARGA DE DATOS DIRECTAMENTE DESDE GOOGLE SHEETS (PESTAÑA INVITADOS) */
+    /* CARGA DE DATOS Y MANEJO DE TIMEOUT */
     const urlParams = new URLSearchParams(window.location.search);
     currentSlug = urlParams.get('card');
 
     if (!currentSlug) {
-      document.getElementById('hero-guest-name').innerText = "Invitación Especial";
-      document.getElementById('invitado-nombre').innerText = "¡Te esperamos en mi fiesta!";
-      document.getElementById('invitado-cupos').innerText = "Por favor confirma tu asistencia directamente con la familia.";
-      document.getElementById('rsvp-container-content').innerHTML = `<p style="font-size: 1rem; color: #666;">Enlace de invitación no válido.</p>`;
+      notificarInvitacionInvalida();
     } else {
+      // Configurar temporizador de seguridad (7 segundos)
+      const timeoutTimer = setTimeout(() => {
+        if (!dataLoaded) {
+          notificarInvitacionInvalida();
+        }
+      }, 7000);
+
       fetch(`${GOOGLE_SCRIPT_URL}?slug=${currentSlug}`)
         .then(res => res.json())
-        .then(resData => procesarDatosServidor(resData))
+        .then(resData => {
+          clearTimeout(timeoutTimer);
+          dataLoaded = true;
+          procesarDatosServidor(resData);
+        })
         .catch(() => {
-          document.getElementById('hero-guest-name').innerText = "¡Te esperamos!";
-          document.getElementById('invitado-nombre').innerText = "¡Te esperamos en mi fiesta!";
-          document.getElementById('invitado-cupos').innerText = "Por favor confirma tu asistencia directamente con la familia.";
-          document.getElementById('rsvp-container-content').innerHTML = `<p style="font-size: 1rem; color: #666;">Error al conectar con la lista de invitados.</p>`;
+          clearTimeout(timeoutTimer);
+          notificarInvitacionInvalida();
         });
+    }
+
+    function notificarInvitacionInvalida() {
+      document.getElementById('hero-guest-name').innerText = "Invitación No Encontrada";
+      document.getElementById('invitado-nombre').innerText = "¡Enlace No Válido!";
+      document.getElementById('invitado-cupos').innerText = "Verifica la dirección ingresada.";
+      document.getElementById('rsvp-container-content').innerHTML = `
+        <div class="error-msg">
+          ❌ <b>No pudimos cargar tu invitación.</b><br>Por favor verifica tu enlace.
+        </div>`;
+      mostrarModalError();
     }
 
     function procesarDatosServidor(data) {
       if (!data.encontrado) {
-        document.getElementById('hero-guest-name').innerText = "Invitación No Encontrada";
-        document.getElementById('invitado-nombre').innerText = "¡Lo sentimos!";
-        document.getElementById('invitado-cupos').innerText = "Este enlace no corresponde a un invitado registrado.";
-        document.getElementById('rsvp-container-content').innerHTML = `<p style="font-size: 1rem; color: #d9534f;">Por favor verifica tu enlace o comunícate con la familia.</p>`;
+        notificarInvitacionInvalida();
         return;
       }
 
@@ -571,10 +687,8 @@
       const container = document.getElementById('checkboxes-container');
       container.innerHTML = "";
       
-      // Agregar al invitado principal
       agregarCheckbox(container, invitadoActual.invitadoPrincipal);
       
-      // Agregar a los acompañantes de la lista de Google Sheets
       if (invitadoActual.acompanantes && invitadoActual.acompanantes.length > 0) {
         invitadoActual.acompanantes.forEach(nombre => agregarCheckbox(container, nombre));
       }
@@ -627,7 +741,6 @@
       .then(() => {
         statusDiv.innerHTML = `<div class="success-msg" style="margin-top:15px;">💚 <b>¡Confirmación registrada con éxito!</b><br>Muchas gracias por acompañarme.</div>`;
         setTimeout(() => {
-          // Volver a consultar al servidor para actualizar los datos visuales
           fetch(`${GOOGLE_SCRIPT_URL}?slug=${currentSlug}`)
             .then(res => res.json())
             .then(resData => procesarDatosServidor(resData));
