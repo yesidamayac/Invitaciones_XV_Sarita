@@ -470,110 +470,90 @@
     }
     iniciarTimer();
 
-    /* CARGA DE DATOS Y VERIFICACIÓN EN GOOGLE SHEETS */
+    /* CARGA DE DATOS DIRECTAMENTE DESDE GOOGLE SHEETS (PESTAÑA INVITADOS) */
     const urlParams = new URLSearchParams(window.location.search);
     currentSlug = urlParams.get('card');
 
-    fetch('invitados.json')
-      .then(res => res.json())
-      .then(data => procesarDatosInvitado(data))
-      .catch(() => {
-        fetch('Invitados_XV_Sarita.json')
-          .then(res => res.json())
-          .then(data => procesarDatosInvitado(data))
-          .catch(() => {
-            document.getElementById('hero-guest-name').innerText = "¡Te esperamos!";
-            document.getElementById('invitado-nombre').innerText = "¡Te esperamos en mi fiesta!";
-            document.getElementById('invitado-cupos').innerText = "Por favor confirma tu asistencia directamente con la familia.";
-            renderizarFormularioFallback();
-          });
-      });
-
-    function procesarDatosInvitado(data) {
-      if (currentSlug && data[currentSlug]) {
-        invitadoActual = data[currentSlug];
-        document.getElementById('hero-guest-name').innerText = "Invitación para: " + invitadoActual.invitadoPrincipal;
-        document.getElementById('invitado-nombre').innerText = "¡Hola, " + invitadoActual.invitadoPrincipal + "!";
-        
-        verificarEstadoAsistenciaEnServidor();
-      } else {
-        document.getElementById('hero-guest-name').innerText = "Invitación Especial";
-        document.getElementById('invitado-nombre').innerText = "¡Te esperamos en mi fiesta!";
-        document.getElementById('invitado-cupos').innerText = "Por favor confirma tu asistencia directamente con la familia.";
-        renderizarFormularioFallback();
-      }
+    if (!currentSlug) {
+      document.getElementById('hero-guest-name').innerText = "Invitación Especial";
+      document.getElementById('invitado-nombre').innerText = "¡Te esperamos en mi fiesta!";
+      document.getElementById('invitado-cupos').innerText = "Por favor confirma tu asistencia directamente con la familia.";
+      document.getElementById('rsvp-container-content').innerHTML = `<p style="font-size: 1rem; color: #666;">Enlace de invitación no válido.</p>`;
+    } else {
+      fetch(`${GOOGLE_SCRIPT_URL}?slug=${currentSlug}`)
+        .then(res => res.json())
+        .then(resData => procesarDatosServidor(resData))
+        .catch(() => {
+          document.getElementById('hero-guest-name').innerText = "¡Te esperamos!";
+          document.getElementById('invitado-nombre').innerText = "¡Te esperamos en mi fiesta!";
+          document.getElementById('invitado-cupos').innerText = "Por favor confirma tu asistencia directamente con la familia.";
+          document.getElementById('rsvp-container-content').innerHTML = `<p style="font-size: 1rem; color: #666;">Error al conectar con la lista de invitados.</p>`;
+        });
     }
 
-    function verificarEstadoAsistenciaEnServidor() {
+    function procesarDatosServidor(data) {
+      if (!data.encontrado) {
+        document.getElementById('hero-guest-name').innerText = "Invitación No Encontrada";
+        document.getElementById('invitado-nombre').innerText = "¡Lo sentimos!";
+        document.getElementById('invitado-cupos').innerText = "Este enlace no corresponde a un invitado registrado.";
+        document.getElementById('rsvp-container-content').innerHTML = `<p style="font-size: 1rem; color: #d9534f;">Por favor verifica tu enlace o comunícate con la familia.</p>`;
+        return;
+      }
+
+      invitadoActual = data;
+      document.getElementById('hero-guest-name').innerText = "Invitación para: " + invitadoActual.invitadoPrincipal;
+      document.getElementById('invitado-nombre').innerText = "¡Hola, " + invitadoActual.invitadoPrincipal + "!";
+      
       const rsvpContainer = document.getElementById('rsvp-container-content');
       const cuposElem = document.getElementById('invitado-cupos');
       const hoy = new Date();
       const plazoVencido = hoy > FECHA_LIMITE;
 
-      fetch(`${GOOGLE_SCRIPT_URL}?slug=${currentSlug}`)
-        .then(res => res.json())
-        .then(resData => {
-          if (resData.confirmado) {
-            // CASO A: YA CONFIRMÓ (Aplica tanto si el plazo venció como si sigue activo)
-            const numConfirmados = resData.asistentes.length;
-            cuposElem.innerText = `Tienes ${numConfirmados} pase(s) confirmado(s).`;
+      if (invitadoActual.confirmado) {
+        // YA CONFIRMÓ
+        const numConfirmados = invitadoActual.asistentes.length;
+        cuposElem.innerText = `Tienes ${numConfirmados} pase(s) confirmado(s).`;
+        let listaAsistentesHtml = invitadoActual.asistentes.map(a => `<li>✔️ ${a}</li>`).join('');
 
-            let listaAsistentesHtml = resData.asistentes.map(a => `<li>✔️ ${a}</li>`).join('');
+        if (plazoVencido) {
+          rsvpContainer.innerHTML = `
+            <div class="success-msg">
+              💚 <b>¡Tu asistencia se encuentra confirmada!</b><br><br>
+              Personas registradas que nos acompañarán:
+              <ul style="margin: 10px 0 15px 20px;">${listaAsistentesHtml}</ul>
+              <div class="note-box">
+                🔒 El plazo de modificaciones ha finalizado. Tu lista de asistencia se encuentra cerrada. Si requieres algún cambio de fuerza mayor, comunícate directamente con la familia de Sarita.
+              </div>
+            </div>
+          `;
+        } else {
+          rsvpContainer.innerHTML = `
+            <div class="success-msg">
+              💚 <b>¡Tu asistencia ya se encuentra confirmada!</b><br><br>
+              Personas registradas que nos acompañarán:
+              <ul style="margin: 10px 0 15px 20px;">${listaAsistentesHtml}</ul>
+              <div class="note-box">
+                Si necesitas hacer alguna modificación o tienes alguna novedad, puedes cambiar tu selección antes del 5 de Mayo de 2027 o comunicarte con la familia de Sarita.
+              </div>
+            </div>
+            <button class="btn-submit" style="margin-top:15px; background-color: #8a6d4b;" onclick="habilitarModificacion()">Modificar mi asistencia ✍️</button>
+          `;
+        }
 
-            if (plazoVencido) {
-              // Plazo Vencido pero SÍ confirmó a tiempo
-              rsvpContainer.innerHTML = `
-                <div class="success-msg">
-                  💚 <b>¡Tu asistencia se encuentra confirmada!</b><br><br>
-                  Personas registradas que nos acompañarán:
-                  <ul style="margin: 10px 0 15px 20px;">${listaAsistentesHtml}</ul>
-                  <div class="note-box">
-                    🔒 El plazo de modificaciones ha finalizado. Tu lista de asistencia se encuentra cerrada. Si requieres algún cambio de fuerza mayor, comunícate directamente con la familia de Sarita.
-                  </div>
-                </div>
-              `;
-            } else {
-              // Plazo Activo y ya confirmó (puede modificar)
-              rsvpContainer.innerHTML = `
-                <div class="success-msg">
-                  💚 <b>¡Tu asistencia ya se encuentra confirmada!</b><br><br>
-                  Personas registradas que nos acompañarán:
-                  <ul style="margin: 10px 0 15px 20px;">${listaAsistentesHtml}</ul>
-                  <div class="note-box">
-                    Si necesitas hacer alguna modificación o tienes alguna novedad, puedes cambiar tu selección antes del 5 de Mayo de 2027 o comunicarte con la familia de Sarita.
-                  </div>
-                </div>
-                <button class="btn-submit" style="margin-top:15px; background-color: #8a6d4b;" onclick="habilitarModificacion()">Modificar mi asistencia ✍️</button>
-              `;
-            }
-
-          } else {
-            // CASO B: NO HA CONFIRMADO
-            if (plazoVencido) {
-              // Plazo Vencido y NO confirmó
-              cuposElem.innerText = `El plazo de confirmación ha vencido.`;
-              rsvpContainer.innerHTML = `
-                <div class="error-msg">
-                  ❌ <b>El plazo de confirmación ha finalizado.</b><br><br>
-                  Por logística del evento, el periodo para registrar asistencia ha vencido y no es posible agregar nuevos invitados. ¡Agradecemos mucho tu comprensión!
-                </div>`;
-            } else {
-              // Plazo Activo y NO ha confirmado (Estado Normal)
-              cuposElem.innerText = `Tienes ${invitadoActual.cupos} pase(s) reservado(s).`;
-              construirFormularioRSVP();
-            }
-          }
-        })
-        .catch(() => {
-          // Si falla la red, mostrar comportamiento estándar por fecha
-          if (plazoVencido) {
-            cuposElem.innerText = `El plazo de confirmación ha vencido.`;
-            rsvpContainer.innerHTML = `<div class="error-msg">❌ El plazo de confirmación ha finalizado.</div>`;
-          } else {
-            cuposElem.innerText = `Tienes ${invitadoActual.cupos} pase(s) reservado(s).`;
-            construirFormularioRSVP();
-          }
-        });
+      } else {
+        // NO HA CONFIRMADO
+        if (plazoVencido) {
+          cuposElem.innerText = `El plazo de confirmación ha vencido.`;
+          rsvpContainer.innerHTML = `
+            <div class="error-msg">
+              ❌ <b>El plazo de confirmación ha finalizado.</b><br><br>
+              Por logística del evento, el periodo para registrar asistencia ha vencido y no es posible agregar nuevos invitados. ¡Agradecemos mucho tu comprensión!
+            </div>`;
+        } else {
+          cuposElem.innerText = `Tienes ${invitadoActual.cupos} pase(s) reservado(s).`;
+          construirFormularioRSVP();
+        }
+      }
     }
 
     function construirFormularioRSVP() {
@@ -590,20 +570,18 @@
 
       const container = document.getElementById('checkboxes-container');
       container.innerHTML = "";
+      
+      // Agregar al invitado principal
       agregarCheckbox(container, invitadoActual.invitadoPrincipal);
-      if (invitadoActual.acompanantes) {
+      
+      // Agregar a los acompañantes de la lista de Google Sheets
+      if (invitadoActual.acompanantes && invitadoActual.acompanantes.length > 0) {
         invitadoActual.acompanantes.forEach(nombre => agregarCheckbox(container, nombre));
       }
     }
 
     function habilitarModificacion() {
       construirFormularioRSVP();
-    }
-
-    function renderizarFormularioFallback() {
-      document.getElementById('rsvp-container-content').innerHTML = `
-        <p style="font-size: 1rem; color: #666;">Por favor confirma tu asistencia directamente con la familia.</p>
-      `;
     }
 
     function agregarCheckbox(container, nombre) {
@@ -649,7 +627,10 @@
       .then(() => {
         statusDiv.innerHTML = `<div class="success-msg" style="margin-top:15px;">💚 <b>¡Confirmación registrada con éxito!</b><br>Muchas gracias por acompañarme.</div>`;
         setTimeout(() => {
-          verificarEstadoAsistenciaEnServidor();
+          // Volver a consultar al servidor para actualizar los datos visuales
+          fetch(`${GOOGLE_SCRIPT_URL}?slug=${currentSlug}`)
+            .then(res => res.json())
+            .then(resData => procesarDatosServidor(resData));
         }, 1500);
       })
       .catch(() => {
