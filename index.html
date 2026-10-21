@@ -1,167 +1,107 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mis 15 Años - Invitación Especial</title>
-  <style>
-    body { font-family: 'Segoe UI', sans-serif; background-color: #fdf6f0; text-align: center; padding: 20px; color: #333; }
-    .card { background: white; padding: 30px; border-radius: 15px; max-width: 450px; margin: 0 auto; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-    h1 { color: #d4a373; margin-bottom: 5px; }
-    .guest-list { text-align: left; margin: 20px 0; background: #faf0ca; padding: 15px; border-radius: 10px; }
-    .checkbox-item { margin: 10px 0; font-size: 1.1em; display: flex; align-items: center; gap: 10px; }
-    button { background: #d4a373; color: white; border: none; padding: 12px 25px; font-size: 1em; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; }
-    button:hover { background: #bc8a5f; }
-    #status { margin-top: 15px; font-weight: bold; word-break: break-all; }
-    .error-msg { color: #d9534f; background: #f8d7da; padding: 10px; border-radius: 5px; margin-top: 10px; font-size: 0.9em; }
-    .success-msg { color: #28a745; background: #d4edda; padding: 10px; border-radius: 5px; margin-top: 10px; }
-  </style>
-</head>
-<body>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis 15 Años - Sarita</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Great+Vibes&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-  <div class="card">
-    <h1>¡Mis 15 Años! 🎉</h1>
-    <p>Te invito a compartir esta noche inolvidable conmigo.</p>
-    <hr>
-
-    <!-- Saludo personalizado -->
-    <h2 id="invitado-nombre">Cargando invitación...</h2>
-    <p id="invitado-cupos"></p>
-
-    <!-- Formulario de checkboxes -->
-    <div id="rsvp-section" style="display:none;">
-      <p><b>Por favor, marca quiénes asistirán:</b></p>
-      <div id="checkboxes-container" class="guest-list"></div>
-      <button id="btn-confirmar" onclick="enviarRSVP()">Confirmar Asistencia</button>
-    </div>
-
-    <div id="status"></div>
-  </div>
-
-  <script>
-    // ⚠️ PEGA AQUÍ TU URL COMPLETA DE GOOGLE APPS SCRIPT
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwnE0o4qOiYgKo1KxtMkxC2GFODXPi5SSl-znn-h0A2tfYgFcOssi0oRMZ-jdBGIQtp4g/exec"; 
-
-    let currentSlug = "";
-    let invitadoActual = null;
-
-    // 1. Obtener el parámetro ?card= de la URL
-    const urlParams = new URLSearchParams(window.location.search);
-    currentSlug = urlParams.get('card');
-
-    // 2. Cargar el JSON de invitados
-    fetch('Invitados_XV_Sarita.json')
-      .then(res => {
-        if(!res.ok) throw new Error("No se pudo cargar el archivo de invitados JSON.");
-        return res.json();
-      })
-      .then(data => {
-        if (currentSlug && data[currentSlug]) {
-          invitadoActual = data[currentSlug];
-          renderizarInvitacion();
-        } else {
-          document.getElementById('invitado-nombre').innerText = "¡Te esperamos en mi fiesta!";
-          document.getElementById('invitado-cupos').innerText = "Por favor confirma tu asistencia directamente con la familia.";
-        }
-      })
-      .catch(err => {
-        // Intentar cargar por nombre alternativo si falla
-        fetch('invitados.json')
-          .then(res => res.json())
-          .then(data => {
-            if (currentSlug && data[currentSlug]) {
-              invitadoActual = data[currentSlug];
-              renderizarInvitacion();
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            pink: '#e65c8a',
+                            lightpink: '#fdf2f8',
+                            darkpink: '#be185d',
+                            crimson: '#9f1239',
+                            gold: '#d4af37',
+                            goldlight: '#fef3c7',
+                            dark: '#1e293b'
+                        }
+                    },
+                    fontFamily: {
+                        script: ['"Dancing Script"', 'cursive'],
+                        cursive: ['"Great Vibes"', 'cursive'],
+                        sans: ['"Montserrat"', 'sans-serif']
+                    }
+                }
             }
-          })
-          .catch(() => {
-            document.getElementById('status').innerHTML = `<div class="error-msg">⚠️ Error al cargar la lista de invitados. Verifica que el archivo JSON esté en GitHub.</div>`;
-          });
-      });
+        }
+    </script>
 
-    // 3. Renderizar nombres y checkboxes
-    function renderizarInvitacion() {
-      document.getElementById('invitado-nombre').innerText = "¡Hola, " + invitadoActual.invitadoPrincipal + "!";
-      document.getElementById('invitado-cupos').innerText = `Tienes ${invitadoActual.cupos} pase(s) reservado(s).`;
+    <style>
+        /* Animaciones personalizadas */
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(3deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+        
+        @keyframes petalFall {
+            0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+        }
 
-      const container = document.getElementById('checkboxes-container');
-      container.innerHTML = "";
+        .animate-float {
+            animation: float 4s ease-in-out infinite;
+        }
 
-      // Checkbox para el principal
-      agregarCheckbox(container, invitadoActual.invitadoPrincipal);
+        .petal {
+            position: absolute;
+            background: linear-gradient(135deg, #f472b6, #fb7185);
+            border-radius: 150% 0 150% 0;
+            opacity: 0.7;
+            pointer-events: none;
+            z-index: 10;
+        }
 
-      // Checkboxes para acompañantes
-      if(invitadoActual.acompanantes) {
-        invitadoActual.acompanantes.forEach(nombre => {
-          agregarCheckbox(container, nombre);
-        });
-      }
+        /* Glassmorphism */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
 
-      document.getElementById('rsvp-section').style.display = 'block';
-    }
+        .glass-card-dark {
+            background: rgba(30, 41, 59, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-b from-rose-50 via-white to-pink-50 text-slate-800 font-sans min-h-screen relative overflow-x-hidden">
 
-    function agregarCheckbox(container, nombre) {
-      const div = document.createElement('div');
-      div.className = 'checkbox-item';
-      div.innerHTML = `
-        <input type="checkbox" value="${nombre}" id="chk_${nombre}" checked>
-        <label for="chk_${nombre}">${nombre}</label>
-      `;
-      container.appendChild(div);
-    }
+    <!-- Lluvia de pétalos sutil de fondo -->
+    <div id="petals-container" class="fixed inset-0 pointer-events-none overflow-hidden z-0"></div>
 
-    // 4. Enviar respuestas con diagnósticos de error
-    function enviarRSVP() {
-      const confirmados = [];
-      const checkboxes = document.querySelectorAll('#checkboxes-container input[type="checkbox"]:checked');
-      
-      checkboxes.forEach(cb => confirmados.push(cb.value));
+    <!-- ========================================== -->
+    <!-- MODAL BANNER DE BIENVENIDA (ESTILO CARLOS Y FER) -->
+    <!-- ========================================== -->
+    <div id="welcome-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md transition-opacity duration-700">
+        <div class="glass-card max-w-lg w-full rounded-3xl p-8 sm:p-10 text-center shadow-2xl border-2 border-brand-gold/40 relative transform transition-transform duration-500 scale-100 animate-float">
+            
+            <!-- Adorno flor esquina -->
+            <div class="absolute -top-6 -left-6 text-brand-pink text-4xl">
+                <i class="fa-solid fa-spa"></i>
+            </div>
+            <div class="absolute -bottom-6 -right-6 text-brand-pink text-4xl">
+                <i class="fa-solid fa-spa"></i>
+            </div>
 
-      if (confirmados.length === 0) {
-        alert("Por favor selecciona al menos a una persona o avísanos si nadie podrá asistir.");
-        return;
-      }
+            <h3 class="font-cursive text-5xl sm:text-6xl text-brand-pink mb-2">¡Bienvenido/a!</h3>
+            
+            <div id="modal-guest-name" class="font-bold text-2xl sm:text-3xl text-slate-800 mb-4 tracking-wide border-b-2 border-brand-gold/30 pb-3 inline-block px-4">
+                Invitado Especial
+            </div>
 
-      const btn = document.getElementById('btn-confirmar');
-      btn.disabled = true;
-      btn.innerText = "Enviando...";
-
-      const statusDiv = document.getElementById('status');
-      statusDiv.innerHTML = "⏳ Conectando con Google Sheets...";
-
-      // Validar URL antes de enviar
-      if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes("TU_SCRIPT_ID_AQUI")) {
-        statusDiv.innerHTML = `<div class="error-msg">❌ ERROR: Aún no has pegado tu URL de Google Apps Script en la variable GOOGLE_SCRIPT_URL del código.</div>`;
-        btn.disabled = false;
-        btn.innerText = "Confirmar Asistencia";
-        return;
-      }
-
-      const payload = {
-        slug: currentSlug || "sin-slug",
-        nombre: invitadoActual ? invitadoActual.invitadoPrincipal : "Desconocido",
-        asistentes: confirmados
-      };
-
-      // Envío compatible con Google Apps Script (modo POST + URLSearchParams como fallback)
-      fetch(GOOGLE_SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify(payload)
-      })
-      .then(response => {
-        // En modo no-cors la respuesta viene opaca, pero si no entra al catch es porque la petición salió hacia Google
-        statusDiv.innerHTML = `<div class="success-msg">💚 <b>¡Confirmación enviada con éxito!</b><br>Gracias por confirmar tu asistencia.</div>`;
-        document.getElementById('rsvp-section').style.display = 'none';
-      })
-      .catch(error => {
-        console.error("Error al enviar:", error);
-        statusDiv.innerHTML = `<div class="error-msg">❌ <b>Error de conexión:</b> ${error.message}<br>Revisa la consola del navegador.</div>`;
-        btn.disabled = false;
-        btn.innerText = "Reintentar Confirmación";
-      });
-    }
-  </script>
-</body>
-</html>
+            <p class="text-slate-600 leading
