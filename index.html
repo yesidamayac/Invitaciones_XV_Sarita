@@ -31,9 +31,7 @@
       overflow-x: hidden;
     }
 
-    /* --------------------------------------------------
-       1. PORTADA HERO (FIXED & BLINDADA)
-    -------------------------------------------------- */
+    /* PORTADA HERO */
     #hero-overlay {
       position: fixed;
       top: 0; left: 0;
@@ -107,9 +105,7 @@
       100% { transform: scale(1); }
     }
 
-    /* --------------------------------------------------
-       2. CONTENEDOR PRINCIPAL AMPLIO
-    -------------------------------------------------- */
+    /* CONTENEDOR PRINCIPAL */
     .container {
       max-width: 1000px;
       margin: 0 auto;
@@ -156,9 +152,7 @@
     .detail-item h4 { font-size: 0.85rem; text-transform: uppercase; color: #8a6d4b; margin-bottom: 6px; letter-spacing: 1px; }
     .detail-item p { font-weight: 600; color: #333; font-size: 1.05rem; }
 
-    /* --------------------------------------------------
-       3. CARRUSEL DE FOTOS (CENTRADAS SIN CORTAR)
-    -------------------------------------------------- */
+    /* CARRUSEL */
     .carousel-container {
       position: relative;
       width: 100%;
@@ -234,9 +228,7 @@
       border-radius: 10px;
     }
 
-    /* --------------------------------------------------
-       4. SECCIÓN RSVP / FORMULARIO FINAL
-    -------------------------------------------------- */
+    /* SECCIÓN RSVP */
     .rsvp-card {
       background: var(--card-bg);
       border: 2px solid var(--primary-color);
@@ -290,7 +282,7 @@
     .btn-submit:hover { background: var(--primary-hover); }
 
     #status { margin-top: 20px; font-weight: 600; word-break: break-all; }
-    .error-msg { color: #d9534f; background: #f8d7da; padding: 14px; border-radius: 12px; font-size: 1rem; }
+    .error-msg { color: #d9534f; background: #f8d7da; padding: 18px; border-radius: 12px; font-size: 1rem; text-align: center; }
     .success-msg { color: #28a745; background: #d4edda; padding: 18px; border-radius: 12px; font-size: 1.05rem; text-align: left; }
     .note-box { font-size: 0.9rem; color: #777; margin-top: 15px; border-top: 1px dashed #ddd; padding-top: 10px; }
 
@@ -380,7 +372,7 @@
       </div>
     </div>
 
-    <!-- TARJETA 3: DETALLES DEL EVENTO (FECHA OFICIAL TUYA) -->
+    <!-- TARJETA 3: DETALLES DEL EVENTO -->
     <div class="card">
       <h2 class="section-title">Detalles del Evento</h2>
       
@@ -418,7 +410,7 @@
   <script>
     const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwnE0o4qOiYgKo1KxtMkxC2GFODXPi5SSl-znn-h0A2tfYgFcOssi0oRMZ-jdBGIQtp4g/exec"; 
 
-    // FECHA LÍMITE DE CONFIRMACIÓN (Ejemplo: 5 de Mayo de 2027, 30 días antes del evento)
+    // FECHA LÍMITE DE CONFIRMACIÓN (5 de Mayo de 2027)
     const FECHA_LIMITE = new Date("2027-05-05T23:59:59");
 
     let currentSlug = "";
@@ -428,7 +420,7 @@
       document.getElementById('hero-overlay').classList.add('hidden');
     }
 
-    /* CARRUSEL FONDO PORTADA (china1, china2, china3) */
+    /* CARRUSEL PORTADA */
     let heroBgIndex = 0;
     const heroBgs = document.querySelectorAll('.hero-bg');
     if(heroBgs.length > 0) {
@@ -439,7 +431,7 @@
       }, 2500);
     }
 
-    /* CARRUSEL MOMENTOS ESPECIALES (sara1 - sara9) */
+    /* CARRUSEL MOMENTOS ESPECIALES */
     let indexActual = 0;
     const track = document.getElementById('carouselTrack');
     const dots = document.querySelectorAll('.dot');
@@ -502,7 +494,6 @@
         invitadoActual = data[currentSlug];
         document.getElementById('hero-guest-name').innerText = "Invitación para: " + invitadoActual.invitadoPrincipal;
         document.getElementById('invitado-nombre').innerText = "¡Hola, " + invitadoActual.invitadoPrincipal + "!";
-        document.getElementById('invitado-cupos').innerText = `Tienes ${invitadoActual.cupos} pase(s) reservado(s).`;
         
         verificarEstadoAsistenciaEnServidor();
       } else {
@@ -515,39 +506,73 @@
 
     function verificarEstadoAsistenciaEnServidor() {
       const rsvpContainer = document.getElementById('rsvp-container-content');
-      
+      const cuposElem = document.getElementById('invitado-cupos');
       const hoy = new Date();
-      if (hoy > FECHA_LIMITE) {
-        rsvpContainer.innerHTML = `
-          <div class="error-msg">
-            ❌ <b>El plazo de confirmación ha finalizado.</b><br>
-            Por logística del evento, el periodo para registrar o modificar invitados ha vencido. ¡Agradecemos tu comprensión!
-          </div>`;
-        return;
-      }
+      const plazoVencido = hoy > FECHA_LIMITE;
 
       fetch(`${GOOGLE_SCRIPT_URL}?slug=${currentSlug}`)
         .then(res => res.json())
         .then(resData => {
           if (resData.confirmado) {
+            // CASO A: YA CONFIRMÓ (Aplica tanto si el plazo venció como si sigue activo)
+            const numConfirmados = resData.asistentes.length;
+            cuposElem.innerText = `Tienes ${numConfirmados} pase(s) confirmado(s).`;
+
             let listaAsistentesHtml = resData.asistentes.map(a => `<li>✔️ ${a}</li>`).join('');
-            rsvpContainer.innerHTML = `
-              <div class="success-msg">
-                💚 <b>¡Tu asistencia ya se encuentra confirmada!</b><br><br>
-                Personas registradas que nos acompañarán:
-                <ul style="margin: 10px 0 15px 20px;">${listaAsistentesHtml}</ul>
-                <div class="note-box">
-                  Si necesitas hacer alguna modificación o tienes alguna novedad, comunícate con la familia de Sarita para cambiar la lista de invitados antes de la fecha límite.
+
+            if (plazoVencido) {
+              // Plazo Vencido pero SÍ confirmó a tiempo
+              rsvpContainer.innerHTML = `
+                <div class="success-msg">
+                  💚 <b>¡Tu asistencia se encuentra confirmada!</b><br><br>
+                  Personas registradas que nos acompañarán:
+                  <ul style="margin: 10px 0 15px 20px;">${listaAsistentesHtml}</ul>
+                  <div class="note-box">
+                    🔒 El plazo de modificaciones ha finalizado. Tu lista de asistencia se encuentra cerrada. Si requieres algún cambio de fuerza mayor, comunícate directamente con la familia de Sarita.
+                  </div>
                 </div>
-              </div>
-              <button class="btn-submit" style="margin-top:15px; background-color: #8a6d4b;" onclick="habilitarModificacion()">Modificar mi asistencia ✍️</button>
-            `;
+              `;
+            } else {
+              // Plazo Activo y ya confirmó (puede modificar)
+              rsvpContainer.innerHTML = `
+                <div class="success-msg">
+                  💚 <b>¡Tu asistencia ya se encuentra confirmada!</b><br><br>
+                  Personas registradas que nos acompañarán:
+                  <ul style="margin: 10px 0 15px 20px;">${listaAsistentesHtml}</ul>
+                  <div class="note-box">
+                    Si necesitas hacer alguna modificación o tienes alguna novedad, puedes cambiar tu selección antes del 5 de Mayo de 2027 o comunicarte con la familia de Sarita.
+                  </div>
+                </div>
+                <button class="btn-submit" style="margin-top:15px; background-color: #8a6d4b;" onclick="habilitarModificacion()">Modificar mi asistencia ✍️</button>
+              `;
+            }
+
           } else {
-            construirFormularioRSVP();
+            // CASO B: NO HA CONFIRMADO
+            if (plazoVencido) {
+              // Plazo Vencido y NO confirmó
+              cuposElem.innerText = `El plazo de confirmación ha vencido.`;
+              rsvpContainer.innerHTML = `
+                <div class="error-msg">
+                  ❌ <b>El plazo de confirmación ha finalizado.</b><br><br>
+                  Por logística del evento, el periodo para registrar asistencia ha vencido y no es posible agregar nuevos invitados. ¡Agradecemos mucho tu comprensión!
+                </div>`;
+            } else {
+              // Plazo Activo y NO ha confirmado (Estado Normal)
+              cuposElem.innerText = `Tienes ${invitadoActual.cupos} pase(s) reservado(s).`;
+              construirFormularioRSVP();
+            }
           }
         })
         .catch(() => {
-          construirFormularioRSVP();
+          // Si falla la red, mostrar comportamiento estándar por fecha
+          if (plazoVencido) {
+            cuposElem.innerText = `El plazo de confirmación ha vencido.`;
+            rsvpContainer.innerHTML = `<div class="error-msg">❌ El plazo de confirmación ha finalizado.</div>`;
+          } else {
+            cuposElem.innerText = `Tienes ${invitadoActual.cupos} pase(s) reservado(s).`;
+            construirFormularioRSVP();
+          }
         });
     }
 
@@ -559,7 +584,7 @@
         <button id="btn-confirmar" class="btn-submit" onclick="enviarRSVP()">Confirmar Asistencia</button>
         <div id="status"></div>
         <div class="note-box">
-          Nota: Si tienes alguna novedad o necesitas cambiar la lista, comunícate directamente con la familia de Sarita. Tienes plazo hasta el 5 de Mayo de 2027.
+          Nota: Si tienes alguna novedad o necesitas cambiar la lista, puedes modificarla en cualquier momento o comunicarte directamente con la familia de Sarita. Tienes plazo hasta el 5 de Mayo de 2027.
         </div>
       `;
 
