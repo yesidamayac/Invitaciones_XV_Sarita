@@ -348,31 +348,7 @@
       <p id="invitado-cupos" style="color: #666; font-size: 1.05rem;"></p>
     </div>
 
-    <!-- TARJETA 2: DETALLES DEL EVENTO -->
-    <div class="card">
-      <h2 class="section-title">Detalles del Evento</h2>
-      
-      <div class="event-details">
-        <div class="detail-item">
-          <h4>📅 Fecha</h4>
-          <p>Sábado, 5 de Junio</p>
-        </div>
-        <div class="detail-item">
-          <h4>⏰ Hora</h4>
-          <p>5:00 PM</p>
-        </div>
-        <div class="detail-item">
-          <h4>📍 Lugar</h4>
-          <p>Salón de Eventos El Castillo</p>
-        </div>
-        <div class="detail-item">
-          <h4>👗 Código de Vestir</h4>
-          <p>Formal / Etiqueta</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- TARJETA 3: MOMENTOS ESPECIALES -->
+    <!-- TARJETA 2: MOMENTOS ESPECIALES (MOVILIZADO ARRIBA) -->
     <div class="card">
       <h2 class="section-title">Momentos Especiales</h2>
       
@@ -403,6 +379,30 @@
         <span class="dot" onclick="irASlide(6)"></span>
         <span class="dot" onclick="irASlide(7)"></span>
         <span class="dot" onclick="irASlide(8)"></span>
+      </div>
+    </div>
+
+    <!-- TARJETA 3: DETALLES DEL EVENTO -->
+    <div class="card">
+      <h2 class="section-title">Detalles del Evento</h2>
+      
+      <div class="event-details">
+        <div class="detail-item">
+          <h4>📅 Fecha</h4>
+          <p>Sábado, 5 de Junio</p>
+        </div>
+        <div class="detail-item">
+          <h4>⏰ Hora</h4>
+          <p>5:00 PM</p>
+        </div>
+        <div class="detail-item">
+          <h4>📍 Lugar</h4>
+          <p>Salón de Eventos El Castillo</p>
+        </div>
+        <div class="detail-item">
+          <h4>👗 Código de Vestir</h4>
+          <p>Formal / Etiqueta</p>
+        </div>
       </div>
     </div>
 
@@ -443,7 +443,7 @@
         heroBgs[heroBgIndex].classList.remove('active');
         heroBgIndex = (heroBgIndex + 1) % heroBgs.length;
         heroBgs[heroBgIndex].classList.add('active');
-      }, 2500); // Cambia cada 2.5 segundos para fluidez constante
+      }, 2500);
     }
 
     /* CARRUSEL MOMENTOS ESPECIALES (sara1 - sara9) */
